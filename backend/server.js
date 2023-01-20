@@ -4,7 +4,7 @@ import cors from "cors"
 import User from "./Schema/User.js"
 import dotenv from "dotenv"
 import mongoose from "mongoose";
-import encrypt from "mongoose-encryption"
+import md5 from "md5";
 
 //App config
 dotenv.config();
@@ -40,7 +40,7 @@ app.post('/register', (req, res) => {
     //create User
     const newUser = new User({
         email:req.body.email,
-        password:req.body.password
+        password:md5(req.body.password)
     })
     
     newUser.save(err=>{
@@ -50,12 +50,12 @@ app.post('/register', (req, res) => {
             console.log("signUp successful");
         }
     })
-    console.log(req.body);
     res.status(200).send("success")
 })
 
 app.post("/login",(req,res) => {
-    const {email,password} = req.body;
+    const email = req.body.email;
+    const password = md5(req.body.password);
     User.findOne({email:email},(err,result)=>{
         if(err){
             console.log(err);
@@ -71,7 +71,6 @@ app.post("/login",(req,res) => {
             }
         }
     })
-    console.log(req.body);
     res.status(200).send("success")
 })
 
